@@ -35,17 +35,20 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
       emit(state.copyWith(isSearching: false));
     });
 
-    on<OpenMovieEvent>((event, emit) async {
+    on<ClickMovieEvent>((event, emit) async {
       final String movieDescription =
           await imdbService.getMovieDescription(event.movie.id!);
+      final Movie currentMovie = event.movie.copyWith(description: movieDescription);
       emit(state.copyWith(
-          currentMovie: event.movie.copyWith(
-            description: movieDescription,
-          )));
-    });
-
-    on<ExitMovieEvent>((event, emit) {
-      emit(state.copyWith(currentMovie: null));
+        currentMovie: currentMovie,
+      ));
+      Get.toNamed(
+        '/movie',
+        arguments: MovieRouteArgs(
+          movie: state.currentMovie!,
+          onReturn: Get.back,
+        ),
+      );
     });
   }
 }

@@ -1,11 +1,14 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_db/ui/theme/app_colors.dart';
 import 'package:flutter_movie_db/data/models/movie.dart';
+import 'package:get/get.dart';
 
 class MovieScreen extends StatelessWidget {
-  const MovieScreen({Key? key, required this.movie, required this.onReturn}) : super(key: key);
-  final Movie movie;
-  final void Function() onReturn;
+  MovieScreen({Key? key}) : super(key: key);
+  final Movie movie = Get.arguments.movie;
+  final void Function() onReturn = Get.arguments.onReturn;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +16,7 @@ class MovieScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(movie.title!),
         leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
+          onTap: onReturn,
           child: Center(
             child: Icon(
               Icons.arrow_back_ios,

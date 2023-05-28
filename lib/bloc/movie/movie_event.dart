@@ -14,10 +14,8 @@ class SearchClosedEvent extends MovieEvent {}
 
 class ShowMoreEvent extends MovieEvent {}
 
-class OpenMovieEvent extends MovieEvent {
+class ClickMovieEvent extends MovieEvent {
   final Movie movie;
 
-  OpenMovieEvent(this.movie);
+  ClickMovieEvent(this.movie);
 }
-
-class ExitMovieEvent extends MovieEvent {}

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_movie_db/ui/theme/app_colors.dart';
 import 'package:flutter_movie_db/bloc/movie/movie_bloc.dart';
-import 'package:flutter_movie_db/ui/screens/movie.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,19 +11,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<MovieBloc>(
       create: (_) => MovieBloc()..add(MovieInitialEvent()),
-      child: BlocConsumer<MovieBloc, MovieState>(
-        listener: (_, state) {
-          if (state.currentMovie != null) {
-            Navigator.of(_).push(
-              MaterialPageRoute(
-                  builder: (_) => MovieScreen(
-                        movie: state.currentMovie!,
-                        onReturn: () =>
-                            context.read<MovieBloc>().add(ExitMovieEvent()),
-                      )),
-            );
-          }
-        },
+      child: BlocBuilder<MovieBloc, MovieState>(
         builder: (context, state) {
           return Scaffold(
             appBar: AppBarWithSearchSwitch(
