@@ -37,11 +37,11 @@ class MovieScreen extends StatelessWidget {
                   children: [
                     Image.network(
                       movie.image!,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.fitHeight,
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      movie.fullTitle!,
+                      movie.description!,
                       style: TextStyle(
                         color: AppColors.textColor,
                         fontWeight: FontWeight.w500,

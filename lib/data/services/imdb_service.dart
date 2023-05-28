@@ -1,11 +1,9 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_movie_db/data/models/movie.dart';
 import 'package:get/get.dart' as getx;
 
 class ImdbService extends getx.GetxService {
-  final String apiKey = 'k_oqnx690u';
+  final String apiKey = 'k_uh884hdk';
   final Dio dio = Dio();
 
   Future<List<Movie>> getTopMovies() async {

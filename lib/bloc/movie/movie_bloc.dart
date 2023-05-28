@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_movie_db/data/models/movie.dart';
+import 'package:flutter_movie_db/data/models/movie_route_args.dart';
 import 'package:flutter_movie_db/data/services/imdb_service.dart';
 import 'package:get/get.dart';
 
@@ -22,17 +23,34 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
     });
 
     on<ShowMoreEvent>((event, emit) {
-      emit(state.copyWith(maxMovieCount: state.maxMovieCount + 10));
+      emit(state.copyWith(
+        maxMovieCount: state.maxMovieCount + 10,
+      ));
     });
 
     on<SearchInputEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: true));
+      if (!state.isSearching) {
+        emit(state.copyWith(
+          isLoading: true,
+        ));
+      }
       final List<Movie> movies = await imdbService.searchMovie(event.text);
-      emit(state.copyWith(isLoading: false, isSearching: true, searchInput: event.text, maxMovieCount: 10, searchList: movies));
+      emit(state.copyWith(
+        isLoading: false,
+        isSearching: true,
+        searchInput: event.text,
+        maxMovieCount: 10,
+        searchList: movies,
+      ));
     });
 
     on<SearchClosedEvent>((event, emit) {
-      emit(state.copyWith(isSearching: false));
+      emit(state.copyWith(
+        isSearching: false,
+        searchInput: '',
+        maxMovieCount: 10,
+        searchList: null,
+      ));
     });
 
     on<ClickMovieEvent>((event, emit) async {

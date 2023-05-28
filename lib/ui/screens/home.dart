@@ -20,14 +20,21 @@ class HomeScreen extends StatelessWidget {
               onClosed: () {
                 context.read<MovieBloc>().add(SearchClosedEvent());
               },
-              onChanged: (text) {
-                if (text.isNotEmpty)
+              clearOnSubmit: false,
+              onSubmitted: (text) {
+                if (text.isNotEmpty) {
                   context.read<MovieBloc>().add(SearchInputEvent(text));
+                }
               },
               appBarBuilder: (context) {
                 return AppBar(
-                  title: const Text('IMDB movies'),
+                  title: Text(state.searchInput.isEmpty ? 'IMDB movies' : 'Search by "${state.searchInput}"'),
                   actions: [
+                    if (state.isSearching) IconButton(
+                      color: AppColors.textColor,
+                      icon: const Icon(Icons.close),
+                      onPressed: AppBarWithSearchSwitch.of(context)?.onClosed,
+                    ),
                     IconButton(
                       color: AppColors.textColor,
                       icon: const Icon(Icons.search),
@@ -49,7 +56,7 @@ class HomeScreen extends StatelessWidget {
                   : SingleChildScrollView(
                       child: Builder(builder: (_) {
                         final List<Widget> movies =
-                            _renderMovies(context, state);
+                            _renderMovies(context, state, (movie) => context.read<MovieBloc>().add(ClickMovieEvent(movie)));
                         if (movies.isNotEmpty) {
                           movies.add(ElevatedButton(
                             onPressed: () =>
@@ -67,7 +74,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> _renderMovies(context, state) {
+  List<Widget> _renderMovies(context, state, onTap) {
     final isSearching = state.isSearching && state.searchInput.isNotEmpty;
     final moviesList = isSearching ? state.searchList : state.movieList;
 
@@ -89,7 +96,7 @@ class HomeScreen extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: GestureDetector(
-          onTap: () => context.read<MovieBloc>().add(OpenMovieEvent(movie)),
+          onTap: () => onTap(movie),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),
             child: Container(
@@ -100,28 +107,31 @@ class HomeScreen extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Image.network(
-                      movie.image!,
+                    SizedBox(
                       height: 180,
                       width: 127,
-                      alignment: Alignment.centerLeft,
-                      errorBuilder: (context, error, stackTrace) => Placeholder(
-                        color: AppColors.accentColor,
-                      ),
-                      loadingBuilder: (context, child, progress) {
-                        if (progress == null) {
-                          return child;
-                        }
-                        return SizedBox(
-                          height: 180,
-                          width: 127,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.accentColor,
+                      child: Image.network(
+                        movie.image!,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.centerLeft,
+                        errorBuilder: (context, error, stackTrace) => Placeholder(
+                          color: AppColors.accentColor,
+                        ),
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) {
+                            return child;
+                          }
+                          return SizedBox(
+                            height: 180,
+                            width: 127,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.accentColor,
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
